@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cadastro de Livros e Compras</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            color: #3b3b3b;
+            padding: 20px 15px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            max-width: 1100px;
+            width: 100%;
+            background: #fff;
+            border-radius: 16px;
+            padding: 40px 50px;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.1);
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            transition: box-shadow 0.3s ease;
+        }
+        .container:hover {
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        header {
+            background-color: #0077b6;
+            padding: 25px 30px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 35px;
+            box-shadow: inset 0 -4px 15px rgb(0 118 182 / 0.2);
+        }
+
+        header nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        header nav button {
+            background: linear-gradient(145deg, #00b4d8, #0096c7);
+            color: white;
+            border: none;
+            padding: 13px 22px;
+            font-size: 17px;
+            cursor: pointer;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            box-shadow:
+                    0 2px 5px rgba(0, 180, 216, 0.4),
+                    inset 0 -3px 6px rgba(255,255,255,0.2);
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            user-select: none;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+
+        header nav button:hover,
+        header nav button:focus-visible {
+            background: #0077b6;
+            box-shadow:
+                    0 4px 15px rgba(0, 118, 182, 0.4),
+                    inset 0 -3px 6px rgba(255,255,255,0.25);
+            outline: none;
+        }
+
+        .page {
+            display: none;
+            flex-grow: 1;
+            overflow-y: auto;
+            padding-right: 8px;
+            scrollbar-width: thin;
+            scrollbar-color: #0077b6 #eeedf3;
+        }
+
+        .page::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .page::-webkit-scrollbar-track {
+            background: #eeedf3;
+            border-radius: 6px;
+        }
+
+        .page::-webkit-scrollbar-thumb {
+            background-color: #0077b6;
+            border-radius: 6px;
+            border: 2px solid #eeedf3;
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeIn 0.35s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h2 {
+            font-size: 34px;
+            margin-bottom: 28px;
+            color: #004a87;
+            font-weight: 700;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            letter-spacing: 0.02em;
+            user-select: none;
+        }
+
+        h3 {
+            font-size: 26px;
+            margin: 26px 0 18px;
+            color: #023e8a;
+            font-weight: 600;
+            border-left: 6px solid #00b4d8;
+            padding-left: 14px;
+            user-select: none;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            filter: drop-shadow(0 1px 1px rgba(0,0,0,0.06));
+        }
+
+        form {
+            display: grid;
+            gap: 20px;
+            max-width: 520px;
+            margin-bottom: 35px;
+        }
+
+        form input, form select, form button {
+            padding: 14px 18px;
+            font-size: 17px;
+            border-radius: 10px;
+            border: 1.8px solid #d1d1d1;
+            transition: all 0.3s ease;
+            box-shadow:
+                    inset 2px 2px 6px #f6f6f6,
+                    inset -2px -2px 6px #d4d4d4;
+            font-weight: 500;
+            color: #3b3b3b;
+            font-family: 'Inter', sans-serif;
+            user-select: text;
+        }
+
+        form input:focus,
+        form select:focus {
+            border-color: #0077b6;
+            box-shadow:
+                    0 0 8px 2px rgba(0, 119, 182, 0.4);
+            outline: none;
+            color: #222;
+        }
+
+        form button {
+            background: linear-gradient(135deg, #00b4d8, #0077b6);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            box-shadow:
+                    0 6px 15px rgba(0, 180, 216, 0.35);
+            text-shadow: 0 1px 3px rgba(0,0,0,0.25);
+            letter-spacing: 0.04em;
+            user-select: none;
+            transition: background 0.4s ease, box-shadow 0.3s ease;
+            border-radius: 12px;
+            padding-top: 15px;
+            padding-bottom: 15px;
+            text-transform: uppercase;
+            font-size: 18px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
+        form button:hover,
+        form button:focus-visible {
+            background: #004a87;
+            box-shadow:
+                    0 12px 30px rgba(0, 74, 135, 0.55);
+            outline: none;
+        }
+
+        .livros-list, .historico-list, .carrinho-list {
+            margin-top: 20px;
+            background: #f7fbff;
+            padding: 22px 18px;
+            border-radius: 14px;
+            max-height: 370px;
+            overflow-y: auto;
+            box-shadow:
+                    inset 2px 2px 8px #e4f0ff,
+                    inset -2px -2px 8px #d7e6ff;
+        }
+
+        .livros-list p, .historico-list p, .carrinho-list p {
+            margin-bottom: 14px;
+            line-height: 1.65;
+            word-break: break-word;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 500;
+            font-size: 16px;
+            color: #2e2e2e;
+            text-shadow: 0 0 0 #444;
+            user-select: none;
+            transition: color 0.3s;
+        }
+        .livros-list p:last-child,
+        .historico-list p:last-child,
+        .carrinho-list p:last-child {
+            margin-bottom: 0;
+        }
+
+        .livros-list button, .carrinho-list button {
+            background-color: #ef476f;
+            color: #fff;
+            padding: 7px 14px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-left: 14px;
+            flex-shrink: 0;
+            font-weight: 700;
+            font-size: 15px;
+            box-shadow:
+                    0 3px 10px rgba(239, 71, 111, 0.5);
+            user-select: none;
+            transition: all 0.25s ease;
+            filter: drop-shadow(0 2px 4px rgba(239,71,111,0.4));
+            letter-spacing: 0.04em;
+        }
+        .livros-list button:hover, .carrinho-list button:hover,
+        .livros-list button:focus-visible, .carrinho-list button:focus-visible {
+            background-color: #d62839;
+            box-shadow:
+                    0 6px 15px rgba(214, 40, 57, 0.7);
+            outline: none;
+        }
+
+        .comprar-container select {
+            padding: 14px 18px;
+            margin-bottom: 22px;
+            font-size: 18px;
+            width: 100%;
+            max-width: 520px;
+            border-radius: 12px;
+            border: 1.8px solid #d1d1d1;
+            box-shadow:
+                    inset 2px 2px 8px #f4faff,
+                    inset -2px -2px 8px #e2ecff;
+            font-weight: 600;
+            color: #3a3a3a;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            user-select: none;
+        }
+        .comprar-container select:hover,
+        .comprar-container select:focus {
+            outline: none;
+            border-color: #0077b6;
+            box-shadow:
+                    0 0 10px 2px rgba(0, 119, 182, 0.4);
+            color: #222;
+        }
+
+        .comprar-container button,
+        .ver-carrinho-btn {
+            margin-top: 15px;
+            padding: 11px 26px;
+            font-size: 18px;
+            background: linear-gradient(145deg, #0077b6, #005b8d);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            box-shadow:
+                    0 8px 20px rgba(0, 87, 136, 0.6);
+            user-select: none;
+            text-shadow: 0 2px 6px rgba(0,0,0,0.25);
+            filter: drop-shadow(0 3px 7px rgba(0,87,136,0.5));
+        }
+
+        .comprar-container button:hover,
+        .ver-carrinho-btn:hover,
+        .comprar-container button:focus-visible,
+        .ver-carrinho-btn:focus-visible {
+            background: linear-gradient(145deg, #004a87, #002f57);
+            box-shadow:
+                    0 12px 26px rgba(0, 74, 135, 0.85);
+            outline: none;
+        }
+
+        .ver-carrinho-btn {
+            float: right;
+            position: relative;
+            min-width: 140px;
+            margin-left: 20px;
+        }
+
+        .ver-carrinho-btn span {
+            position: absolute;
+            top: -10px;
+            right: -14px;
+            background: #ef476f;
+            color: white;
+            border-radius: 50%;
+            font-size: 14px;
+            padding: 3px 8px;
+            font-weight: 700;
+            box-shadow:
+                    0 3px 7px rgba(239, 71, 111, 0.7);
+            user-select: none;
+            filter: drop-shadow(0 2px 4px rgba(239,71,111,0.5));
+            pointer-events: none;
+        }
+
+        /* Pagina carrinho e pagamento */
+        #pagina-carrinho {
+            display: none;
+            max-width: 620px;
+            width: 100%;
+            margin: 0 auto;
+            background: #ffffffee;
+            border-radius: 18px;
+            padding: 35px 45px;
+            box-shadow: 0 0 28px rgba(0,0,0,0.12);
+            animation: slideIn 0.4s ease forwards;
+            text-align: center;
+        }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #pagina-carrinho h2 {
+            color: #004a87;
+            margin-bottom: 28px;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            user-select: none;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        #carrinho-itens {
+            margin-bottom: 25px;
+            max-height: 350px;
+            overflow-y: auto;
+            padding-right: 10px;
+            box-shadow:
+                    inset 2px 2px 8px #edf7ff,
+                    inset -2px -2px 8px #e5f0ff;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: 16px;
+            color: #1f1f1f;
+            text-align: left;
+        }
+
+        #carrinho-itens p {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1.5px solid #eaeaea;
+            padding: 12px 10px;
+            transition: background-color 0.3s ease;
+        }
+        #carrinho-itens p:last-child {
+            border-bottom: none;
+        }
+        #carrinho-itens p:hover {
+            background-color: #dff4ff;
+        }
+
+        #total-compra {
+            font-weight: 900;
+            font-size: 22px;
+            color: #023e8a;
+            margin-bottom: 25px;
+            user-select: none;
+            text-shadow:
+                    0 1px 2px rgba(2,62,138,0.5);
+        }
+
+        #btn-finalizar-pagamento {
+            margin: auto;
+            padding: 16px 0;
+            font-size: 20px;
+            max-width: 100%;
+            max-width: 350px;
+            background: linear-gradient(135deg, #0077b6, #004a87);
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            filter: drop-shadow(0 4px 9px rgba(0,74,135,0.8));
+            user-select: none;
+        }
+
+        #btn-finalizar-pagamento:hover,
+        #btn-finalizar-pagamento:focus-visible {
+            background: linear-gradient(145deg, #004a87, #002f57);
+            filter: drop-shadow(0 6px 10px rgba(0,74,135,0.95));
+            outline: none;
+        }
+
+        #pagina-carrinho button:last-of-type {
+            background-color: #ef476f;
+            margin-top: 14px;
+            padding: 12px 0;
+            max-width: 350px;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+            box-shadow:
+                    0 5px 12px rgba(239, 71, 111, 0.7);
+            border-radius: 20px;
+            transition: background-color 0.3s ease;
+            border: none;
+            cursor: pointer;
+            color: white;
+            user-select: none;
+        }
+        #pagina-carrinho button:last-of-type:hover,
+        #pagina-carrinho button:last-of-type:focus-visible {
+            background-color: #d62839;
+            outline: none;
+            box-shadow:
+                    0 8px 18px rgba(214, 40, 57, 0.85);
+        }
+
+        /* Modal Pagamento */
+        #modal-pagamento {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(0,0,0,0.45);
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            padding: 15px;
+            transition: opacity 0.3s ease;
+        }
+
+        #modal-pagamento.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        #modal-pagamento .modal-content {
+            background: #fafcff;
+            border-radius: 20px;
+            max-width: 480px;
+            width: 100%;
+            padding: 35px 42px;
+            position: relative;
+            overflow-y: auto;
+            max-height: 85vh;
+            box-shadow:
+                    0 20px 35px rgba(0, 71, 135, 0.25);
+            font-weight: 600;
+            color: #164061;
+            user-select: text;
+            font-size: 16px;
+        }
+
+        #modal-pagamento h3 {
+            margin-bottom: 28px;
+            color: #0077b6;
+            text-align: center;
+            font-weight: 800;
+            letter-spacing: 0.03em;
+            user-select: none;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            font-size: 28px;
+        }
+
+        #modal-pagamento .close-btn {
+            position: absolute;
+            top: 16px;
+            right: 18px;
+            background: transparent;
+            border: none;
+            font-size: 30px;
+            cursor: pointer;
+            color: #666;
+            font-weight: 700;
+            transition: color 0.3s ease;
+            user-select: none;
+        }
+
+        #modal-pagamento .close-btn:hover,
+        #modal-pagamento .close-btn:focus-visible {
+            color: #000;
+            outline: none;
+        }
+
+        #modal-pagamento label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 700;
+            color: #164061;
+            user-select: none;
+            letter-spacing: 0.02em;
+        }
+
+        #modal-pagamento input,
+        #modal-pagamento select {
+            width: 100%;
+            padding: 14px 16px;
+            margin-bottom: 22px;
+            border-radius: 12px;
+            border: 1.8px solid #acc1d8;
+            font-size: 16px;
+            font-weight: 600;
+            box-shadow:
+                    inset 2px 2px 8px #e6ecf8,
+                    inset -2px -2px 8px #c9d3e7;
+            color: #2f4362;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            font-family: 'Inter', sans-serif;
+            user-select: text;
+        }
+
+        #modal-pagamento input:focus,
+        #modal-pagamento select:focus {
+            border-color: #005b8d;
+            box-shadow:
+                    0 0 10px 3px rgba(0, 91, 141, 0.5);
+            outline: none;
+            color: #103355;
+        }
+
+        #modal-pagamento button.payment-submit-btn {
+            background: linear-gradient(180deg, #0077b6, #004a87);
+            color: white;
+            padding: 16px 22px;
+            border: none;
+            cursor: pointer;
+            border-radius: 20px;
+            font-size: 19px;
+            width: 100%;
+            font-weight: 900;
+            letter-spacing: 0.05em;
+            box-shadow:
+                    0 12px 25px rgba(0, 74, 135, 0.75);
+            text-shadow: 0 3px 8px rgba(0,0,0,0.35);
+            user-select: none;
+            transition: background 0.35s ease, box-shadow 0.3s ease;
+        }
+
+        #modal-pagamento button.payment-submit-btn:hover,
+        #modal-pagamento button.payment-submit-btn:focus-visible {
+            background: linear-gradient(190deg, #005f9d, #00365f);
+            box-shadow:
+                    0 18px 30px rgba(0, 57, 93, 0.95);
+            outline: none;
+        }
+
+        /* Pix QR Code */
+        #pix-qrcode {
+            display: block;
+            margin: 25px auto 20px auto;
+            width: 220px;
+            height: 220px;
+            background-color: #f6faff;
+            border-radius: 18px;
+            box-shadow:
+                    0 8px 18px rgba(0, 119, 182, 0.3),
+                    inset 1px 1px 10px #d7ecff;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            user-select: none;
+        }
+
+        /* Payment method tabs */
+        .payment-tabs {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 28px;
+            border-bottom: 3px solid #dce9fc;
+            user-select: none;
+        }
+
+        .payment-tab {
+            cursor: pointer;
+            padding: 13px 28px;
+            font-weight: 900;
+            color: #5c7ea7;
+            border-bottom: 4px solid transparent;
+            transition: all 0.4s ease;
+            font-size: 18px;
+            letter-spacing: 0.05em;
+            user-select: none;
+            text-transform: uppercase;
+            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.07));
+            border-radius: 6px 6px 0 0;
+            background: #ecf3ff;
+            box-shadow:
+                    inset 1px 1px 6px #fff,
+                    inset -1px -1px 6px #dbe3ff;
+        }
+
+        .payment-tab.active {
+            border-color: #0077b6;
+            color: #004a87;
+            background: #ffffff;
+            filter: drop-shadow(0 4px 8px rgba(0,119,182,0.35));
+            box-shadow:
+                    0 3px 12px rgba(0, 119, 182, 0.45);
+            user-select: text;
+        }
+    </style>
+</head>
+<body>
+<div class="container" role="main" aria-live="polite" aria-atomic="true">
+    <header>
+        <nav aria-label="Menu principal">
+            <button type="button" onclick="showPage('cadastro')">Cadastrar Livro</button>
+            <button type="button" onclick="showPage('visualizar')">Visualizar Livros</button>
+            <button type="button" onclick="showPage('comprar')">Comprar Livro</button>
+            <button type="button" onclick="showPage('historico')">Histórico de Compras</button>
+            <button class="ver-carrinho-btn" aria-label="Ver carrinho de compras" type="button" onclick="abrirPaginaCarrinho()">
+                Ver Carrinho <span id="contador-carrinho" aria-live="polite" aria-atomic="true">0</span>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Cadastro -->
+    <section id="cadastro" class="page active" aria-labelledby="tituloCadastro" tabindex="0">
+        <h2 id="tituloCadastro">Cadastrar Livro</h2>
+        <article aria-label="Cadastrar livro físico">
+            <h3>Livro Físico</h3>
+            <form id="form-livro-fisico" onsubmit="event.preventDefault(); cadastrarLivroFisico();" novalidate autocomplete="off">
+                <input type="text" id="titulo-fisico" placeholder="Título" aria-label="Título do livro físico" required />
+                <input type="text" id="autor-fisico" placeholder="Autor" aria-label="Autor do livro físico" required />
+                <input type="number" id="quantidade-fisico" placeholder="Quantidade" min="1" aria-label="Quantidade do livro físico" required />
+                <input type="number" id="preco-fisico" placeholder="Preço (R$)" min="0" step="0.01" aria-label="Preço do livro físico" required />
+                <select id="tipo-fisico" aria-label="Tipo do livro físico" required>
+                    <option value="romance">Romance</option>
+                    <option value="ficcao">Ficção</option>
+                    <option value="cientifico">Científico</option>
+                </select>
+                <button type="submit">Cadastrar</button>
+            </form>
+        </article>
+
+        <article aria-label="Cadastrar livro digital">
+            <h3>Livro Digital</h3>
+            <form id="form-livro-digital" onsubmit="event.preventDefault(); cadastrarLivroDigital();" novalidate autocomplete="off">
+                <input type="text" id="titulo-digital" placeholder="Título" aria-label="Título do livro digital" required />
+                <input type="text" id="autor-digital" placeholder="Autor" aria-label="Autor do livro digital" required />
+                <input type="url" id="link-digital" placeholder="Link de Download" aria-label="Link de download do livro digital" required />
+                <input type="number" id="preco-digital" placeholder="Preço (R$)" min="0" step="0.01" aria-label="Preço do livro digital" required />
+                <select id="tipo-digital" aria-label="Tipo do livro digital" required>
+                    <option value="romance">Romance</option>
+                    <option value="ficcao">Ficção</option>
+                    <option value="cientifico">Científico</option>
+                </select>
+                <button type="submit">Cadastrar</button>
+            </form>
+        </article>
+    </section>
+
+    <!-- Visualizar -->
+    <section id="visualizar" class="page" aria-labelledby="tituloVisualizar" tabindex="0">
+        <h2 id="tituloVisualizar">Livros Cadastrados</h2>
+        <div id="livros-fisicos-list" class="livros-list" aria-live="polite"></div>
+        <div id="livros-digitais-list" class="livros-list" aria-live="polite"></div>
+    </section>
+
+    <!-- Comprar -->
+    <section id="comprar" class="page" aria-labelledby="tituloComprar" tabindex="0">
+        <h2 id="tituloComprar">Comprar Livro</h2>
+        <div class="comprar-container">
+            <label for="tipo-livro" class="sr-only">Selecionar tipo de livro</label>
+            <select id="tipo-livro" aria-controls="livros-para-compra-list" onchange="atualizarLivrosParaCompra()" aria-live="polite" aria-atomic="true">
+                <option value="fisico">Livro Físico</option>
+                <option value="digital">Livro Digital</option>
+            </select>
+            <div id="livros-para-compra-list" class="livros-list" aria-live="polite" aria-atomic="true" tabindex="0"></div>
+        </div>
+    </section>
+
+    <!-- Histórico -->
+    <section id="historico" class="page" aria-labelledby="tituloHistorico" tabindex="0">
+        <h2 id="tituloHistorico">Histórico de Compras</h2>
+        <div id="historico-list" class="historico-list" aria-live="polite" aria-atomic="true"></div>
+    </section>
+</div>
+
+<!-- Página Carrinho e Pagamento -->
+<section id="pagina-carrinho" aria-label="Página de carrinho de compras e pagamento" tabindex="0">
+    <h2>Carrinho de Compras</h2>
+    <div id="carrinho-itens" class="carrinho-list" aria-live="polite" aria-atomic="true" tabindex="0"></div>
+    <p id="total-compra" aria-live="polite" aria-atomic="true">Total: R$ 0,00</p>
+    <button id="btn-finalizar-pagamento" onclick="abrirModalPagamento()" aria-label="Finalizar compra e escolher método de pagamento">Finalizar Compra</button>
+    <button style="margin-top: 16px; background-color: #ef476f;" onclick="voltarParaCompras()" aria-label="Voltar para página de compras">Voltar para comprar</button>
+</section>
+
+<!-- Modal de Pagamento -->
+<div id="modal-pagamento" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-description" tabindex="-1">
+    <div class="modal-content">
+        <button class="close-btn" title="Fechar" aria-label="Fechar modal de pagamento" onclick="fecharModalPagamento()">×</button>
+
+        <h3 id="modal-title">Escolha o Método de Pagamento</h3>
+
+        <div class="payment-tabs" role="tablist">
+            <div class="payment-tab active" data-metodo="pix" role="tab" tabindex="0" aria-selected="true" aria-controls="pagamento-pix" id="tab-pix" onclick="trocarMetodoPagamento('pix')">Pix</div>
+            <div class="payment-tab" data-metodo="cartao" role="tab" tabindex="-1" aria-selected="false" aria-controls="pagamento-cartao" id="tab-cartao" onclick="trocarMetodoPagamento('cartao')">Cartão de Crédito</div>
+            <div class="payment-tab" data-metodo="boleto" role="tab" tabindex="-1" aria-selected="false" aria-controls="pagamento-boleto" id="tab-boleto" onclick="trocarMetodoPagamento('boleto')">Boleto</div>
+        </div>
+
+        <div id="pagamento-pix" class="pagamento-metodo" role="tabpanel" aria-labelledby="tab-pix">
+            <p style="font-weight:600; font-size: 18px; color: #0077b6;">Chave Pix para pagamento:</p>
+            <p id="pix-chave" style="word-break: break-word; font-family: monospace; margin-bottom: 12px; user-select: text;"></p>
+            <div id="pix-qrcode" aria-label="QR Code Pix" role="img" aria-live="off"></div>
+            <button onclick="copiarPixChave()" style="background:#00b4d8; color:#fff; padding:10px 18px; border:none; border-radius:8px; cursor:pointer; margin-bottom:20px; font-weight: 600;">Copiar chave Pix</button>
+        </div>
+
+        <div id="pagamento-cartao" class="pagamento-metodo" style="display:none;" role="tabpanel" aria-labelledby="tab-cartao">
+            <form id="cartaoForm" novalidate autocomplete="off">
+                <label for="numero-cartao">Número do Cartão:</label>
+                <input type="text" id="numero-cartao" maxlength="19" placeholder="0000 0000 0000 0000" required autocomplete="cc-number" pattern="\\d{13,19}" aria-required="true" aria-describedby="numero-cartao-desc" />
+                <small id="numero-cartao-desc" class="sr-only">Digite 13 a 19 dígitos do cartão de crédito.</small>
+
+                <label for="nome-cartao">Nome no Cartão:</label>
+                <input type="text" id="nome-cartao" placeholder="Nome do titular" required autocomplete="cc-name" aria-required="true" />
+
+                <label for="validade-cartao">Validade:</label>
+                <input type="month" id="validade-cartao" min="2023-01" required aria-required="true" />
+
+                <label for="cvv-cartao">CVV:</label>
+                <input type="password" id="cvv-cartao" maxlength="4" placeholder="123" required pattern="\\d{3,4}" autocomplete="cc-csc" aria-required="true" />
+
+                <button type="submit" class="payment-submit-btn" aria-label="Pagar com cartão de crédito">Pagar com Cartão</button>
+            </form>
+        </div>
+
+        <div id="pagamento-boleto" class="pagamento-metodo" style="display:none;" role="tabpanel" aria-labelledby="tab-boleto">
+            <p style="font-weight:600; font-size: 18px; color: #0077b6;">Boleto gerado para pagamento:</p>
+            <p id="boleto-codigo" style="word-break: break-word; font-family: monospace; font-size: 16px; margin-bottom: 12px; user-select: text;"></p>
+            <p><strong>Vencimento:</strong> <span id="boleto-vencimento"></span></p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Dados das coleções
+    let livrosFisicos = [];
+    let livrosDigitais = [];
+    let compras = [];
+    let carrinho = [];
+
+    // Guarda o preço gerado por livro (key: título+tipo)
+    // Utilitária para formatação brl
+    function formatarPreco(num) {
+        return num.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    // Evento para alternar páginas
+    function showPage(page) {
+        fecharModalPagamento();
+        document.getElementById('pagina-carrinho').style.display = 'none';
+        document.querySelector('.container').style.display = 'flex';
+
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        const el = document.getElementById(page);
+        if(el) el.classList.add('active');
+        if (page === 'comprar') atualizarLivrosParaCompra();
+        if (page === 'historico') exibirHistorico();
+        if (page === 'visualizar') {
+            exibirLivrosFisicos();
+            exibirLivrosDigitais();
+        }
+        // Set focus on heading for a11y
+        setTimeout(() => {
+            el?.querySelector('h2')?.focus();
+        }, 100);
+    }
+
+    // Funções cadastro livro
+    function cadastrarLivroFisico() {
+        const titulo = document.getElementById('titulo-fisico').value.trim();
+        const autor = document.getElementById('autor-fisico').value.trim();
+        const quantidade = parseInt(document.getElementById('quantidade-fisico').value);
+        const tipo = document.getElementById('tipo-fisico').value;
+
+        if(!titulo || !autor || isNaN(quantidade) || quantidade < 1) {
+            alert('Preencha todos os campos corretamente.');
+            return;
+        }
+
+        const preco = parseFloat(document.getElementById('preco-fisico').value);
+        if (isNaN(preco) || preco <= 0) {
+            alert('Informe um preço válido.');
+            return;
+        }
+        livrosFisicos.push({ titulo, autor, quantidade, tipo, preco });
+        document.getElementById('form-livro-fisico').reset();
+        exibirLivrosFisicos();
+        alert(`Livro físico "${titulo}" cadastrado com sucesso!`);
+    }
+
+    function cadastrarLivroDigital() {
+        const titulo = document.getElementById('titulo-digital').value.trim();
+        const autor = document.getElementById('autor-digital').value.trim();
+        const link = document.getElementById('link-digital').value.trim();
+        const tipo = document.getElementById('tipo-digital').value;
+
+        if(!titulo || !autor || !link) {
+            alert('Preencha todos os campos corretamente.');
+            return;
+        }
+
+        const preco = parseFloat(document.getElementById('preco-digital').value);
+        if (isNaN(preco) || preco <= 0) {
+            alert('Informe um preço válido.');
+            return;
+        }
+        livrosDigitais.push({ titulo, autor, link, tipo, preco });
+        document.getElementById('form-livro-digital').reset();
+        exibirLivrosDigitais();
+        alert(`Livro digital "${titulo}" cadastrado com sucesso!`);
+    }
+
+    function exibirLivrosFisicos() {
+        const list = document.getElementById('livros-fisicos-list');
+        list.innerHTML = '<h3>Livros Físicos</h3>';
+        if(livrosFisicos.length === 0){
+            list.innerHTML += '<p>Nenhum livro físico cadastrado.</p>';
+            return;
+        }
+        livrosFisicos.forEach(l => {
+            const preco = l.preco;
+            list.innerHTML += `<p><strong>${l.titulo}</strong> (${l.autor}) - Quantidade: ${l.quantidade} - Tipo: ${l.tipo} - Preço: ${formatarPreco(preco)}</p>`;
+        });
+    }
+
+    function exibirLivrosDigitais() {
+        const list = document.getElementById('livros-digitais-list');
+        list.innerHTML = '<h3>Livros Digitais</h3>';
+        if(livrosDigitais.length === 0){
+            list.innerHTML += '<p>Nenhum livro digital cadastrado.</p>';
+            return;
+        }
+        livrosDigitais.forEach(l => {
+            const preco = l.preco;
+            list.innerHTML += `<p><strong>${l.titulo}</strong> (${l.autor}) - Tipo: ${l.tipo} - Preço: ${formatarPreco(preco)} - <a href="${l.link}" target="_blank" rel="noopener">Download</a></p>`;
+        });
+    }
+
+    // Atualiza a lista de livros para compra
+    function atualizarLivrosParaCompra() {
+        const tipo = document.getElementById('tipo-livro').value;
+        const list = document.getElementById('livros-para-compra-list');
+        list.innerHTML = '';
+
+        if (tipo === 'fisico') {
+            let adicionou = false;
+            livrosFisicos.forEach((livro, index) => {
+                if (livro.quantidade > 0) {
+                    const preco = livro.preco;
+                    adicionou = true;
+                    list.innerHTML += `<p><span><strong>${livro.titulo}</strong> (${livro.autor}) - ${livro.quantidade} unidades - ${formatarPreco(preco)}</span>
+              <button onclick="adicionarAoCarrinho(${index}, 'fisico')" aria-label="Adicionar ${livro.titulo} ao carrinho">Adicionar</button></p>`;
+                }
+            });
+            if(!adicionou) list.innerHTML = '<p>Nenhum livro físico disponível para compra.</p>';
+        } else {
+            if(livrosDigitais.length === 0) {
+                list.innerHTML = '<p>Nenhum livro digital disponível para compra.</p>';
+                return;
+            }
+            livrosDigitais.forEach((livro, index) => {
+                const preco = livro.preco;
+                list.innerHTML += `<p><span><strong>${livro.titulo}</strong> (${livro.autor}) - ${formatarPreco(preco)}</span>
+            <button onclick="adicionarAoCarrinho(${index}, 'digital')" aria-label="Adicionar ${livro.titulo} ao carrinho">Adicionar</button></p>`;
+            });
+        }
+    }
+
+    // Adiciona item ao carrinho, atualiza quantidade e contador
+    function adicionarAoCarrinho(index, tipo) {
+        let livro;
+        if (tipo === 'fisico') {
+            livro = livrosFisicos[index];
+            if (livro.quantidade > 0) {
+                livro.quantidade--;
+                // Guardar item no carrinho, incluir preço salvo
+                carrinho.push({
+                    livro: { ...livro },
+                    tipo,
+                    preco: livro.preco
+                });
+            } else {
+                alert("Quantidade insuficiente para este livro.");
+                return;
+            }
+        } else {
+            livro = livrosDigitais[index];
+            carrinho.push({
+                livro: { ...livro },
+                tipo,
+                preco: livro.preco
+            });
+        }
+        document.getElementById('contador-carrinho').textContent = carrinho.length;
+        atualizarLivrosParaCompra();
+        alert(`"${livro.titulo}" foi adicionado ao carrinho.`);
+    }
+
+    // Obtém ou gera preço aleatório para um livro (base key)
+    function obterPrecoLivro(chave) {
+        if (!precosGerados[chave]) {
+            // Gerar preço aleatório de 20 a 150 reais com duas casas decimais
+            const preco = (Math.random() * 130 + 20).toFixed(2);
+            precosGerados[chave] = parseFloat(preco);
+        }
+        return precosGerados[chave];
+    }
+
+    // Abre página do carrinho
+    function abrirPaginaCarrinho() {
+        if (carrinho.length === 0) {
+            alert("Seu carrinho está vazio.");
+            return;
+        }
+        // Esconde outras páginas e container
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.querySelector('.container').style.display = 'none';
+        // Exibe página do carrinho
+        const carPage = document.getElementById('pagina-carrinho');
+        carPage.style.display = 'block';
+        atualizarCarrinho();
+        carPage.focus();
+    }
+
+    // Atualiza visual do carrinho com preço total
+    function atualizarCarrinho() {
+        const carrinhoItens = document.getElementById('carrinho-itens');
+        carrinhoItens.innerHTML = '';
+        if(carrinho.length === 0){
+            carrinhoItens.innerHTML = '<p>Seu carrinho está vazio.</p>';
+            document.getElementById('total-compra').textContent = "Total: R$ 0,00";
+            return;
+        }
+        let total = 0;
+        carrinho.forEach((item, i) => {
+            total += item.preco;
+            carrinhoItens.innerHTML += `
+          <p>
+            <span><strong>${item.livro.titulo}</strong> (${item.livro.autor}) - ${formatarPreco(item.preco)}</span>
+            <button aria-label="Remover ${item.livro.titulo} do carrinho" onclick="removerDoCarrinho(${i})">Remover</button>
+          </p>`;
+        });
+        document.getElementById('total-compra').textContent = "Total: " + formatarPreco(total);
+    }
+
+    // Remove item do carrinho, atualiza estoque se físico
+    function removerDoCarrinho(index) {
+        if(index < 0 || index >= carrinho.length) return;
+        const removido = carrinho.splice(index, 1)[0];
+        if (removido.tipo === 'fisico') {
+            const livroEstoque = livrosFisicos.find(l => l.titulo === removido.livro.titulo);
+            if (livroEstoque) livroEstoque.quantidade++;
+        }
+        document.getElementById('contador-carrinho').textContent = carrinho.length;
+        atualizarCarrinho();
+    }
+
+    // Voltar para página de compras
+    function voltarParaCompras(){
+        document.getElementById('pagina-carrinho').style.display = 'none';
+        document.querySelector('.container').style.display = 'flex';
+        showPage('comprar');
+        atualizarLivrosParaCompra();
+    }
+
+    // Finalizar compra - abre modal de pagamento
+    function abrirModalPagamento() {
+        if(carrinho.length === 0){
+            alert('Carrinho vazio!');
+            return;
+        }
+        document.getElementById('modal-pagamento').classList.add('active');
+        document.getElementById('modal-pagamento').focus();
+
+        // Gerar dados para PIX e boleto
+        gerarPix();
+        gerarBoleto();
+
+        // Define método Pix ativo inicialmente
+        trocarMetodoPagamento('pix');
+    }
+
+    // Fecha modal de pagamento
+    function fecharModalPagamento() {
+        document.getElementById('modal-pagamento').classList.remove('active');
+        limparFormularioCartao();
+    }
+
+    // Troca o método de pagamento mostrado
+    function trocarMetodoPagamento(metodo) {
+        const tabs = document.querySelectorAll('.payment-tab');
+        tabs.forEach(tab => {
+            const isActive = tab.dataset.metodo === metodo;
+            tab.classList.toggle('active', isActive);
+            tab.setAttribute('aria-selected', isActive);
+            tab.tabIndex = isActive ? 0 : -1;
+        });
+
+        const metodos = ['pix', 'cartao', 'boleto'];
+        metodos.forEach(m => {
+            const el = document.getElementById('pagamento-' + m);
+            if(el) el.style.display = m === metodo ? 'block' : 'none';
+        });
+
+        // Move focus to the show panel for better accessibility
+        const panel = document.getElementById('pagamento-' + metodo);
+        if(panel) panel.focus();
+    }
+
+    // Gerar dados PIX aleatórios
+    function gerarPix(){
+        // Gerar chave aleatória estilo UUID curto para simulação
+        const chavePix = crypto.randomUUID ? crypto.randomUUID() : 'a2cedbb7-2573-486e-989e-6e6c06e2aa91';
+        document.getElementById('pix-chave').textContent = chavePix;
+
+        // Gerar QR Code simples - usando Google Chart API para demo
+        const qrData = `00020126680014br.gov.bcb.pix0136${chavePix}5204000053039865405.105802BR5925Nome do Recebedor6009Cidade00062070503***6304B14F`;
+        const qrCodeUrl = `https://chart.googleapis.com/chart?cht=qr&chl=${encodeURIComponent(qrData)}&chs=200x200&chld=L|1`;
+        document.getElementById('pix-qrcode').style.backgroundImage = `url('${qrCodeUrl}')`;
+    }
+
+    // Copiar chave pix para transferência rápida
+    function copiarPixChave(){
+        const chave = document.getElementById('pix-chave').textContent;
+        navigator.clipboard.writeText(chave).then(() => {
+            alert('Chave Pix copiada para área de transferência!');
+        }).catch(() => {
+            alert('Não foi possível copiar. Copie manualmente: ' + chave);
+        });
+    }
+
+    // Gerar boleto simples com código aleatório e vencimento
+    function gerarBoleto(){
+        // Código de barras aleatório 44 dígitos simulados
+        let codigo = '';
+        for(let i=0; i<44; i++){
+            codigo += Math.floor(Math.random() * 10);
+        }
+        document.getElementById('boleto-codigo').textContent = codigo;
+        // Vencimento daqui a 7 dias
+        const hoje = new Date();
+        const venc = new Date(hoje.getTime() + 7*24*60*60*1000);
+        const dia = String(venc.getDate()).padStart(2,'0');
+        const mes = String(venc.getMonth()+1).padStart(2,'0');
+        const ano = venc.getFullYear();
+        document.getElementById('boleto-vencimento').textContent = `${dia}/${mes}/${ano}`;
+    }
+
+    // Limpar formulário cartão na abertura e fechamento de modal
+    function limparFormularioCartao() {
+        const form = document.getElementById('cartaoForm');
+        form.reset();
+    }
+
+    // Validação simples e simulação de pagamento no cartão
+    document.getElementById('cartaoForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const form = e.target;
+        if(!form.checkValidity()){
+            alert('Por favor, preencha corretamente todos os campos do cartão.');
+            return;
+        }
+
+        // Validação simples para data de validade atual ou futura
+        const validade = form['validade-cartao'].value;
+        if(!validade){
+            alert("Preencha a validade do cartão corretamente.");
+            return;
+        }
+        const hoje = new Date();
+        const partes = validade.split('-');
+        const validadeDate = new Date(parseInt(partes[0]), parseInt(partes[1]) - 1, 1);
+        if(validadeDate < new Date(hoje.getFullYear(), hoje.getMonth(), 1)){
+            alert("Cartão expirado. Informe uma validade válida.");
+            return;
+        }
+
+        alert('Pagamento com cartão realizado com sucesso! Obrigado pela compra.');
+        finalizarCompra();
+        fecharModalPagamento();
+    });
+
+    // Finaliza compra: registra compra, limpa carrinho e atualiza contador
+    function finalizarCompra() {
+        const data = new Date().toLocaleString();
+        carrinho.forEach(item => compras.push({ livro: item.livro, data }));
+        carrinho = [];
+        precosGerados = {}; // Limpar preços para próxima sessão (opcional)
+        document.getElementById('contador-carrinho').textContent = '0';
+        atualizarLivrosParaCompra();
+        if(document.getElementById('pagina-carrinho').style.display === 'block'){
+            document.getElementById('pagina-carrinho').style.display = 'none';
+            document.querySelector('.container').style.display = 'flex';
+            showPage('historico');
+        }
+        exibirHistorico();
+        alert('Compra finalizada com sucesso!');
+    }
+
+    // Exibe histórico formatado
+    function exibirHistorico() {
+        const historico = document.getElementById('historico-list');
+        historico.innerHTML = '<h3>Compras Realizadas</h3>';
+        if(compras.length === 0){
+            historico.innerHTML += '<p>Nenhuma compra realizada ainda.</p>';
+            return;
+        }
+        compras.forEach(c => {
+            historico.innerHTML += `<p><strong>${c.livro.titulo}</strong> (${c.livro.autor}) - ${c.data}</p>`;
+        });
+    }
+
+    // Função para permitir navegação com teclado na aba do modal (a11y)
+    document.querySelectorAll('.payment-tab').forEach(tab => {
+        tab.addEventListener('keydown', e => {
+            let newIndex;
+            const tabs = Array.from(document.querySelectorAll('.payment-tab'));
+            const currentIndex = tabs.indexOf(e.currentTarget);
+            if(e.key === 'ArrowRight'){
+                newIndex = (currentIndex + 1) % tabs.length;
+                tabs[newIndex].focus();
+                trocarMetodoPagamento(tabs[newIndex].dataset.metodo);
+                e.preventDefault();
+            } else if(e.key === 'ArrowLeft') {
+                newIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+                tabs[newIndex].focus();
+                trocarMetodoPagamento(tabs[newIndex].dataset.metodo);
+                e.preventDefault();
+            }
+        });
+    });
+
+    // Início com página cadastro ativa
+    showPage('cadastro');
+</script>
+
+<style>
+    /* Screen reader only */
+    .sr-only {
+        position: absolute !important;
+        width: 1px !important;
+        height: 1px !important;
+        padding: 0 !important;
+        margin: -1px !important;
+        overflow: hidden !important;
+        clip: rect(0, 0, 0, 0) !important;
+        white-space: nowrap !important;
+        border: 0 !important;
+    }
+</style>
+</body>
