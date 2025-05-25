@@ -49,7 +49,7 @@
         .comprar-container select { padding: 14px 18px; margin-bottom: 22px; font-size: 18px; width: 100%; max-width: 520px; border-radius: 12px; border: 1.8px solid #d1d1d1; box-shadow: inset 2px 2px 8px #f4faff, inset -2px -2px 8px #e2ecff; font-weight: 600; color: #3a3a3a; transition: border-color 0.3s ease, box-shadow 0.3s ease; cursor: pointer; user-select: none; }
         .comprar-container select:hover, .comprar-container select:focus { outline: none; border-color: #0077b6; box-shadow: 0 0 10px 2px rgba(0, 119, 182, 0.4); color: #222; }
         .comprar-container button, .ver-carrinho-btn { margin-top: 15px; padding: 11px 26px; font-size: 18px; background: linear-gradient(145deg, #0077b6, #005b8d); color: white; border: none; border-radius: 14px; cursor: pointer; transition: all 0.3s ease; font-weight: 700; letter-spacing: 0.04em; box-shadow: 0 8px 20px rgba(0, 87, 136, 0.6); user-select: none; text-shadow: 0 2px 6px rgba(0,0,0,0.25); filter: drop-shadow(0 3px 7px rgba(0,87,136,0.5)); }
-        .comprar-container button:hover, .ver-carrinho-btn:hover, .comprar-container button:focus-visible, .ver-carrinho-btn:focus-visible { background: linear-gradient(145deg, #004a87, #002f57); box-shadow: 0 12px 26px rgba(0, 74, 135, 0.85); outline: none; }
+        .comprar-container button:hover, .ver-carrinho-btn:hover, .comprar-container button:focus-visible, .ver-carrinho-btn:focus-visible { background: linear-gradient(145deg, #004a87, #002f57); box-shadow: 0 12px 30px rgba(0, 74, 135, 0.85); outline: none; }
 
         /* Carrinho */
         .ver-carrinho-btn { float: right; position: relative; min-width: 140px; margin-left: 20px; }
@@ -130,7 +130,7 @@
           color: #666;
           font-weight: 700;
           transition: color 0.3s ease;
-          user-select: none; /* CORRIGIDO AQUI */
+          user-select: none;
         }
 
         #modal-pagamento .close-btn:hover,
@@ -200,6 +200,33 @@
             0 18px 30px rgba(0, 57, 93, 0.95);
           outline: none;
         }
+
+        /* Novo estilo para o botão de "simular compra" */
+        #modal-pagamento button.simular-pagamento-btn {
+            background: linear-gradient(180deg, #6c757d, #495057); /* Tom de cinza */
+            color: white;
+            padding: 12px 22px; /* Um pouco menor que o principal */
+            border: none;
+            cursor: pointer;
+            border-radius: 16px; /* Menor raio de borda */
+            font-size: 16px;
+            width: 100%;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+            text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            user-select: none;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+            margin-top: 15px; /* Margem superior para separar dos outros botões */
+        }
+
+        #modal-pagamento button.simular-pagamento-btn:hover,
+        #modal-pagamento button.simular-pagamento-btn:focus-visible {
+            background: linear-gradient(190deg, #495057, #343a40);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+            outline: none;
+        }
+
 
         /* Pix QR Code */
         #pix-qrcode {
@@ -414,6 +441,10 @@
             <p id="boleto-codigo" style="word-break: break-word; font-family: monospace; font-size: 16px; margin-bottom: 12px; user-select: text;"></p>
             <p><strong>Vencimento:</strong> <span id="boleto-vencimento"></span></p>
         </div>
+
+        <button class="simular-pagamento-btn" onclick="processarPagamento('Simulado (Sem Pagamento)')" aria-label="Marcar compra como efetuada sem realizar pagamento">
+            Marcar Compra como Efetuada (Sem Pagamento)
+        </button>
     </div>
 </div>
 
@@ -421,10 +452,10 @@
     <p>Projeto de Exemplo &copy; 2025</p>
     <div class="social-links">
         <a href="https://github.com/VieiraGuilherme-dev/ProjetoWeb-Livraria" target="_blank" aria-label="Visitar meu perfil no GitHub">
-            <img width="30" height="30" src="https://img.icons8.com/fluency/48/github.png" alt="GitHub"/>
+            <img width="26" height="26" src="https://img.icons8.com/fluency/48/github.png" alt="GitHub"/>
         </a>
         <a href="https://linkedin.com/in/seu-usuario" target="_blank" aria-label="Visitar meu perfil no LinkedIn">
-            <img width="30" height="30" src="https://img.icons8.com/ios-glyphs/30/linkedin.png" alt="LinkedIn"/>
+            <img width="26" height="26" src="https://img.icons8.com/ios-glyphs/30/linkedin.png" alt="LinkedIn"/>
         </a>
     </div>
 </footer>
@@ -915,9 +946,9 @@
       }
       const [anoValidade, mesValidade] = validadeInput.split('-').map(Number);
       const hoje = new Date();
-      const ultimoDiaMesValidade = new Date(anoValidade, mesValidade, 0); 
+      const ultimoDiaMesValidade = new Date(anoValidade, mesValidade, 0); // Pega o último dia do mês de validade
 
-      if(ultimoDiaMesValidade < new Date(hoje.getFullYear(), hoje.getMonth(), 1)){ 
+      if(ultimoDiaMesValidade < new Date(hoje.getFullYear(), hoje.getMonth(), 1)){ // Compara com o primeiro dia do mês atual
         alert("Cartão expirado. Informe uma validade válida.");
         return;
       }
@@ -925,7 +956,14 @@
       processarPagamento('Cartão de Crédito');
     });
 
+    // Processa o pagamento (para qualquer método que chegue aqui)
     function processarPagamento(metodoPagamento) {
+        const totalItensNoCarrinho = carrinho.reduce((acc, item) => acc + item.quantidadeNoCarrinho, 0);
+        if(totalItensNoCarrinho === 0){
+            alert('Seu carrinho está vazio! Adicione itens antes de finalizar a compra.');
+            return;
+        }
+
         const dataCompra = new Date();
         const totalGasto = carrinho.reduce((acc, item) => acc + (item.precoUnitario * item.quantidadeNoCarrinho), 0);
 
@@ -934,7 +972,8 @@
             autor: item.autor,
             tipoVenda: item.tipoVenda,
             quantidade: item.quantidadeNoCarrinho,
-            precoUnitario: item.precoUnitario
+            precoUnitario: item.precoUnitario,
+            linkDownload: item.link || null // Inclui o link para livros digitais no histórico
         }));
 
         compras.push({
@@ -947,14 +986,14 @@
 
         carrinho = []; // Limpa o carrinho
         salvarDado(STORAGE_KEYS.CARRINHO, carrinho);
-     
+        // Não vamos limpar precosGerados aqui, para manter os preços dos livros já vistos.
 
         atualizarContadorCarrinho();
         atualizarLivrosParaCompra();
         fecharModalPagamento();
 
-        alert(`Pagamento via ${metodoPagamento} realizado com sucesso! Sua compra foi registrada.`);
-        showPage('historico');
+        alert(`Compra via "${metodoPagamento}" realizada com sucesso! Sua compra foi registrada.`);
+        showPage('historico'); // Leva para a página de histórico
     }
 
 
@@ -967,9 +1006,11 @@
       }
       // Exibe as compras mais recentes primeiro
       [...compras].reverse().forEach((compra, index) => {
-        let itensHtml = compra.itens.map(item =>
-          `<li>${item.titulo} (${item.tipoVenda}) - Qtd: ${item.quantidade} - ${formatarPreco(item.precoUnitario)} cada</li>`
-        ).join('');
+        let itensHtml = compra.itens.map(item => {
+            const linkDisplay = item.tipoVenda === 'digital' && item.linkDownload ?
+                `<br><small>Link: <a href="${item.linkDownload}" target="_blank">${item.linkDownload.substring(0, 30)}...</a></small>` : '';
+            return `<li>${item.titulo} (${item.tipoVenda}) - Qtd: ${item.quantidade} - ${formatarPreco(item.precoUnitario)} cada${linkDisplay}</li>`;
+        }).join('');
 
         historicoDiv.innerHTML += `
           <article class="compra-historico-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 8px; background-color: #f9f9f9;">
@@ -984,6 +1025,7 @@
       });
     }
 
+    // Navegação por teclado nas abas do modal de pagamento
     document.querySelectorAll('.payment-tab').forEach(tab => {
       tab.addEventListener('keydown', e => {
         let newIndex;
@@ -1006,25 +1048,16 @@
       });
     });
 
-    // --- INICIALIZAÇÃO DA APLICAÇÃO ---
-  
     document.addEventListener('DOMContentLoaded', () => {
         carregarDadosSalvos();
         atualizarContadorCarrinho(); 
-        exibirHistorico();         
-        showPage('cadastro');    
-   
+        exibirHistorico();        
+        showPage('cadastro');      
+      
         if(document.getElementById('comprar').classList.contains('active')){
             atualizarLivrosParaCompra();
         }
-        // Adiciona listeners para os botões de pagamento direto (Pix e Boleto)
-        const btnPagarPix = document.querySelector('#pagamento-pix button.payment-submit-btn');
-        if(btnPagarPix) btnPagarPix.addEventListener('click', () => processarPagamento('Pix'));
 
-        const btnPagarBoleto = document.querySelector('#pagamento-boleto button.payment-submit-btn');
-        if(btnPagarBoleto) btnPagarBoleto.addEventListener('click', () => processarPagamento('Boleto'));
-
-        // Adiciona um ouvinte para fechar o modal ao clicar fora dele
         const modalPagamento = document.getElementById('modal-pagamento');
         if (modalPagamento) {
             modalPagamento.addEventListener('click', function(event) {
