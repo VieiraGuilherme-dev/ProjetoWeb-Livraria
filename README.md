@@ -80,7 +80,7 @@ As consultas estão presentes no arquivo `consultas.sql` dentro da pasta `/scrip
 
 ### 👨‍💻 Desenvolvido por
 
-Guilherme Vieira, Vinicius Marques, Wagner Teofilo 
+*Guilherme Vieira, Vinicius Marques, Wagner Teofilo*
 
 
 ## 🧠 Como Executar o Projeto
